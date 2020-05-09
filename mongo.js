@@ -28,7 +28,7 @@ if (process.argv.length === 3) {
         })
         mongoose.connection.close()
     })
-}
+} 
 else if(process.argv.length < 6) {
     const peronName = process.argv[3]
     const personNumber = process.argv[4]
