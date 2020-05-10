@@ -61,7 +61,7 @@ let count = 0
 
   //==============================
 
-  app.post('/api/phonebook', (request, response) => {
+  app.post('/api/phonebook', (request, response, next) => {
     const name = request.body.name
     const number = request.body.number
   
@@ -77,9 +77,12 @@ let count = 0
       date: new Date(),
     })
   
-    person.save().then(savedPerson => {
-      response.json(savedPerson.toJSON())
+    person.save()
+    .then(savedPerson => savedPerson.toJSON())
+    .then(savedAndFormattedPerson => {
+      response.json(savedAndFormattedPerson)
     })
+    .catch(error => next(error))
   })
 
   app.put('/api/phonebook/:id', (request, response, next) => {
@@ -116,6 +119,8 @@ let count = 0
   
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
     }
   
     next(error)
